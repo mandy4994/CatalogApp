@@ -62,9 +62,15 @@ def editCategoryItem(category_id, itemID):
 		print "inside else"
 		return render_template('editmenuitem.html', category_id=category_id, itemID=itemID, item = editedItem)
 # Route for deleting category item function
-@app.route('/category/<int:category_id>/<int:item_id>/delete')
+@app.route('/category/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteCategoryItem(category_id, item_id):
-	return "page to delete an item!"
+	itemToDelete = session.query(Item).filter_by(id = item_id).one()
+	if request.method == 'POST':
+		session.delete(itemToDelete)
+		session.commit()
+		return redirect(url_for('categoryMenu', category_id = category_id))
+	else:
+		return render_template('deletemenuitem.html',category_id=category_id, item_id = item_id, item=itemToDelete)
 
 if __name__ == '__main__':
     app.debug = True
