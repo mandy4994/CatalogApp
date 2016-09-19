@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item
@@ -28,6 +28,7 @@ def categoryMenu(category_id):
 
     return output
 
+
 @app.route('/categories/<int:category_id>/')
 def categoryMenu(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
@@ -39,39 +40,46 @@ def categoryMenu(category_id):
 
 @app.route('/category/<int:category_id>/new', methods=['GET', 'POST'])
 def newCategoryItem(category_id):
-	if request.method == 'POST':
-		print "In post method"
-		newItem = Item(name=request.form['name'], category_id=category_id)
-		session.add(newItem)
-		session.commit()
-		return redirect(url_for('categoryMenu', category_id=category_id))
-	else:
-		return render_template('newmenuitem.html', category_id=category_id)
+    if request.method == 'POST':
+        print "In post method"
+        newItem = Item(name=request.form['name'], description=request.form['description'],
+                       price=request.form['price'], category_id=category_id)
+        session.add(newItem)
+        session.commit()
+        flash("New Item Created!")
+        return redirect(url_for('categoryMenu', category_id=category_id))
+    else:
+        return render_template('newmenuitem.html', category_id=category_id)
 # Route for edit category item function
+
+
 @app.route('/category/<int:category_id>/<int:itemID>/edit', methods=['GET', 'POST'])
 def editCategoryItem(category_id, itemID):
-	editedItem = session.query(Item).filter_by(id = itemID).one()
-	if request.method == 'POST':
-		print "Inside Post"
-		if request.form['name']:
-			editedItem.name = request.form['name']
-			session.add(editedItem)
-			session.commit()
-			return redirect(url_for('categoryMenu', category_id = category_id))
-	else:
-		print "inside else"
-		return render_template('editmenuitem.html', category_id=category_id, itemID=itemID, item = editedItem)
+    editedItem = session.query(Item).filter_by(id=itemID).one()
+    if request.method == 'POST':
+        print "Inside Post"
+        if request.form['name']:
+            editedItem.name = request.form['name']
+            session.add(editedItem)
+            session.commit()
+            return redirect(url_for('categoryMenu', category_id=category_id))
+    else:
+        print "inside else"
+        return render_template('editmenuitem.html', category_id=category_id, itemID=itemID, item=editedItem)
 # Route for deleting category item function
+
+
 @app.route('/category/<int:category_id>/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteCategoryItem(category_id, item_id):
-	itemToDelete = session.query(Item).filter_by(id = item_id).one()
-	if request.method == 'POST':
-		session.delete(itemToDelete)
-		session.commit()
-		return redirect(url_for('categoryMenu', category_id = category_id))
-	else:
-		return render_template('deletemenuitem.html',category_id=category_id, item_id = item_id, item=itemToDelete)
+    itemToDelete = session.query(Item).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        session.delete(itemToDelete)
+        session.commit()
+        return redirect(url_for('categoryMenu', category_id=category_id))
+    else:
+        return render_template('deletemenuitem.html', category_id=category_id, item_id=item_id, item=itemToDelete)
 
 if __name__ == '__main__':
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
