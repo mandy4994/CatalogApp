@@ -280,8 +280,8 @@ def CategoryMenuJSON(category_id):
 
 @app.route('/category/<int:category_id>/menu/<int:item_id>/JSON')
 def menuItemJSON(category_id, item_id):
-    Item = session.query(Item).filter_by(id=item_id).one()
-    return jsonify(Item=Item.serialize)
+    item = session.query(Item).filter_by(id=item_id).one()
+    return jsonify(Item=item.serialize)
 
 
 @app.route('/category/JSON')
