@@ -41,8 +41,9 @@
 		</div>
 		<div class="col-md-1"></div>
 	</div>
+	<div class="list-group">
 	{% for category in categories %}
-		<a href = "{{url_for('showMenu', category_id = category.id)}}">
+		<a href = "{{url_for('showMenu', category_id = category.id)}}" class="list-group-item">
 			<div class="row">
 				<div class="col-md-1"></div>
 					<div class="col-md-10 category-list">
@@ -52,4 +53,5 @@
 			</div>
 		</a>
 	{% endfor %}
+	</div>
 {% endblock %}

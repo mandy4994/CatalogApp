@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Category, Base, Item
+from database_setup import Category, Base, Item, User
 
 engine = create_engine('sqlite:///catalogapp.db')
 # Bind the engine to the metadata of the Base class so that the
@@ -19,25 +19,9 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-# Menu for UrbanBurger
-restaurant1 = Category(name="Food")
-
-session.add(restaurant1)
-session.commit()
-
-menuItem2 = Item(name="Veggie Burger", description="Juicy grilled veggie patty with tomato mayo and lettuce",
-                     price="$7.50", category=restaurant1)
-
-session.add(menuItem2)
-session.commit()
-
-
-menuItem1 = Item(name="French Fries", description="with garlic and parmesan",
-                     price="$2.99", category=restaurant1)
-
-session.add(menuItem1)
-session.commit()
-
+User.__table__.drop()
+Category.__table__.drop()
+Item.__table__.drop()
 
 
 print "added menu items!"
